@@ -3,6 +3,9 @@ pragma solidity 0.8.0;
 
 import "./Ownable.sol";
 
+// refactor: custom errors 
+// look at constructor 
+
 contract Constants {
     uint256 public tradeFlag = 1;
     uint256 public basicFlag = 0;
@@ -206,6 +209,7 @@ contract GasContract is Ownable, Constants {
         balances[senderOfTx] -= _amount;
         balances[_recipient] += _amount;
         emit Transfer(_recipient, _amount);
+        // update all the payment struct data together
         Payment memory payment;
         payment.admin = address(0);
         payment.adminUpdated = false;
@@ -270,6 +274,7 @@ contract GasContract is Ownable, Constants {
             "Gas Contract - addToWhitelist function -  tier level should not be greater than 255"
         );
         whitelist[_userAddrs] = _tier;
+        // this can get cleaned up
         if (_tier > 3) {
             whitelist[_userAddrs] -= _tier;
             whitelist[_userAddrs] = 3;
