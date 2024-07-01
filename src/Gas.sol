@@ -77,7 +77,7 @@ contract GasContract is Ownable {
     );
     event WhiteListTransfer(address indexed);
 
-	// TODO look at constructor
+    // TODO look at constructor
     constructor(address[] memory _admins, uint256 _totalSupply) {
         contractOwner = msg.sender;
         totalSupply = _totalSupply;
@@ -156,9 +156,10 @@ contract GasContract is Ownable {
         internal
         returns (bool status_, bool tradeMode_)
     {
-    {   History memory history = History({
-        blockNumber: block.number,
-        lastUpdate: block.timestamp,
+        History memory history = History({
+            blockNumber: block.number,
+            lastUpdate: block.timestamp,
+            updatedBy: _updateAddress
         });
         paymentHistory.push(history);
         return (true, _tradeMode);
