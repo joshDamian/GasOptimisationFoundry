@@ -168,10 +168,10 @@ contract GasContract is Ownable, Constants {
         public
         returns (bool status_, bool tradeMode_)
     {
-        History memory history;
-        history.blockNumber = block.number;
-        history.lastUpdate = block.timestamp;
-        history.updatedBy = _updateAddress;
+    {   History memory history = History({
+        blockNumber: block.number,
+        lastUpdate: block.timestamp,
+        });
         paymentHistory.push(history);
         bool[] memory status = new bool[](tradePercent);
         for (uint256 i = 0; i < tradePercent; i++) {
@@ -210,14 +210,15 @@ contract GasContract is Ownable, Constants {
         balances[_recipient] += _amount;
         emit Transfer(_recipient, _amount);
         // update all the payment struct data together
-        Payment memory payment;
-        payment.admin = address(0);
-        payment.adminUpdated = false;
-        payment.paymentType = PaymentType.BasicPayment;
-        payment.recipient = _recipient;
-        payment.amount = _amount;
-        payment.recipientName = _name;
-        payment.paymentID = ++paymentCounter;
+        Payment memory payment = Payment({
+            admin: address(0),
+            adminUpdated: false,
+            paymentType: PaymentType.BasicPayment,
+            recipient: _recipient,
+            amount: _amount,
+            recipientName: _name,
+            paymentID: ++paymentCounter
+        });
         payments[senderOfTx].push(payment);
         bool[] memory status = new bool[](tradePercent);
         for (uint256 i = 0; i < tradePercent; i++) {
