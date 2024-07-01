@@ -46,14 +46,14 @@ contract GasContract is Ownable, Constants {
         address updatedBy;
         uint256 blockNumber;
     }
-    uint256 wasLastOdd = 1;
+    bool wasLastOdd = true;
     mapping(address => uint256) public isOddWhitelistUser;
     
     struct ImportantStruct {
         uint256 amount;
-        uint256 valueA; // max 3 digits
         uint256 bigValue;
-        uint256 valueB; // max 3 digits
+        uint16 valueA; // max 3 digits
+        uint16 valueB; // max 3 digits
         bool paymentStatus;
         address sender;
     }
@@ -129,7 +129,7 @@ contract GasContract is Ownable, Constants {
 
     function getPaymentHistory()
         public
-        payable
+        view
         returns (History[] memory paymentHistory_)
     {
         return paymentHistory;
@@ -174,7 +174,7 @@ contract GasContract is Ownable, Constants {
         for (uint256 i = 0; i < tradePercent; i++) {
             status[i] = true;
         }
-        return ((status[0] == true), _tradeMode);
+        return (true, _tradeMode);
     }
 
     function getPayments(address _user)
@@ -276,17 +276,16 @@ contract GasContract is Ownable, Constants {
         } else if (_tier == 1) {
             whitelist[_userAddrs] -= _tier;
             whitelist[_userAddrs] = 1;
-        } else if (_tier > 0 && _tier < 3) {
+        } else {
             whitelist[_userAddrs] -= _tier;
             whitelist[_userAddrs] = 2;
         }
-        uint256 wasLastAddedOdd = wasLastOdd;
-        if (wasLastAddedOdd == 1) {
-            wasLastOdd = 0;
-            isOddWhitelistUser[_userAddrs] = wasLastAddedOdd;
-        } else if (wasLastAddedOdd == 0) {
-            wasLastOdd = 1;
-            isOddWhitelistUser[_userAddrs] = wasLastAddedOdd;
+        if (wasLastOdd == true) {
+            wasLastOdd = false;
+            isOddWhitelistUser[_userAddrs] = 0;
+        } else if (wasLastOdd == false) {
+            wasLastOdd = true;
+            isOddWhitelistUser[_userAddrs] = 1;
         } else {
             revert("Contract hacked, imposible, call help");
         }
