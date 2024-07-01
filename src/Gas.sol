@@ -45,7 +45,7 @@ contract GasContract is Ownable {
         address updatedBy;
         uint256 blockNumber;
     }
-    uint256 wasLastOdd = 1;
+    bool wasLastOdd = true;
     mapping(address => uint256) public isOddWhitelistUser;
     
     struct ImportantStruct {
@@ -100,7 +100,7 @@ contract GasContract is Ownable {
 
     function getPaymentHistory()
         public
-        payable
+        view
         returns (History[] memory paymentHistory_)
     {
         return paymentHistory;
@@ -160,7 +160,6 @@ contract GasContract is Ownable {
         history.lastUpdate = block.timestamp;
         history.updatedBy = _updateAddress;
         paymentHistory.push(history);
-
         return (true, _tradeMode);
     }
 
@@ -262,17 +261,16 @@ contract GasContract is Ownable {
         } else if (_tier == 1) {
             whitelist[_userAddrs] -= _tier;
             whitelist[_userAddrs] = 1;
-        } else if (_tier > 0 && _tier < 3) {
+        } else {
             whitelist[_userAddrs] -= _tier;
             whitelist[_userAddrs] = 2;
         }
-        uint256 wasLastAddedOdd = wasLastOdd;
-        if (wasLastAddedOdd == 1) {
-            wasLastOdd = 0;
-            isOddWhitelistUser[_userAddrs] = wasLastAddedOdd;
-        } else if (wasLastAddedOdd == 0) {
-            wasLastOdd = 1;
-            isOddWhitelistUser[_userAddrs] = wasLastAddedOdd;
+        if (wasLastOdd == true) {
+            wasLastOdd = false;
+            isOddWhitelistUser[_userAddrs] = 1;
+        } else if (wasLastOdd == false) {
+            wasLastOdd = true;
+            isOddWhitelistUser[_userAddrs] = 0;
         } else {
             revert ContractHacked();
         }
