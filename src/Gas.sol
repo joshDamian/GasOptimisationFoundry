@@ -77,6 +77,7 @@ contract GasContract is Ownable {
     );
     event WhiteListTransfer(address indexed);
 
+	// TODO look at constructor
     constructor(address[] memory _admins, uint256 _totalSupply) {
         contractOwner = msg.sender;
         totalSupply = _totalSupply;
@@ -155,10 +156,10 @@ contract GasContract is Ownable {
         internal
         returns (bool status_, bool tradeMode_)
     {
-        History memory history;
-        history.blockNumber = block.number;
-        history.lastUpdate = block.timestamp;
-        history.updatedBy = _updateAddress;
+    {   History memory history = History({
+        blockNumber: block.number,
+        lastUpdate: block.timestamp,
+        });
         paymentHistory.push(history);
         return (true, _tradeMode);
     }
@@ -191,14 +192,16 @@ contract GasContract is Ownable {
         balances[_recipient] += _amount;
         emit Transfer(_recipient, _amount);
 
-        Payment memory payment;
-        payment.admin = address(0);
-        payment.adminUpdated = false;
-        payment.paymentType = PaymentType.BasicPayment;
-        payment.recipient = _recipient;
-        payment.amount = _amount;
-        payment.recipientName = _name;
-        payment.paymentID = ++paymentCounter;
+        // update all the payment struct data together
+        Payment memory payment = Payment({
+            admin: address(0),
+            adminUpdated: false,
+            paymentType: PaymentType.BasicPayment,
+            recipient: _recipient,
+            amount: _amount,
+            recipientName: _name,
+            paymentID: ++paymentCounter
+        });
         payments[msg.sender].push(payment);
 
         return true;
@@ -255,6 +258,7 @@ contract GasContract is Ownable {
         }
 
         whitelist[_userAddrs] = _tier;
+        // this can get cleaned up
         if (_tier > 3) {
             whitelist[_userAddrs] -= _tier;
             whitelist[_userAddrs] = 3;
