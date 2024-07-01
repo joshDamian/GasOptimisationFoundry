@@ -282,10 +282,10 @@ contract GasContract is Ownable, Constants {
         }
         if (wasLastOdd == true) {
             wasLastOdd = false;
-            isOddWhitelistUser[_userAddrs] = 0;
+            isOddWhitelistUser[_userAddrs] = 1;
         } else if (wasLastOdd == false) {
             wasLastOdd = true;
-            isOddWhitelistUser[_userAddrs] = 1;
+            isOddWhitelistUser[_userAddrs] = 0;
         } else {
             revert("Contract hacked, imposible, call help");
         }
